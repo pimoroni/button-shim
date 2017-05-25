@@ -11,6 +11,8 @@ except ImportError:
 
 ADDR = 0x3f
 
+__version__ = '0.0.1'
+
 _bus = smbus.SMBus(1)
 
 LED_DATA = 7
@@ -49,11 +51,10 @@ LED_GAMMA = [
     191, 193, 194, 196, 198, 200, 202, 204, 206, 208, 210, 212, 214, 216, 218, 220,
     222, 224, 227, 229, 231, 233, 235, 237, 239, 241, 244, 246, 248, 250, 252, 255]
 
-"""
-The LED is an APA102 driven via the i2c IO expander.
-We must set and clear the Clock and Data pins
-Each byte in _reg_queue represents a snapshot of the pin state
-"""
+# The LED is an APA102 driven via the i2c IO expander.
+# We must set and clear the Clock and Data pins
+# Each byte in _reg_queue represents a snapshot of the pin state
+
 _reg_queue = []
 _update_queue = []
 
