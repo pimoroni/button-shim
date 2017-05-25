@@ -152,7 +152,7 @@ def _chunk(l, n):
 
 def _write(data):
     for chunk in _chunk(data, 32):
-        _bus.write_block_data(ADDR, REG_OUTPUT, chunk)
+        _bus.write_i2c_block_data(ADDR, REG_OUTPUT, chunk)
 
 def _write_byte(byte):
     for x in range(8):
@@ -164,6 +164,24 @@ def _write_byte(byte):
         byte <<= 1
 
 def on_press(buttons, handler=None):
+    """Attach a press handler to one or more buttons.
+    
+    This handler is fired when you press a button.
+
+    It will be passed two arguments, the button index and a
+    boolean indicating whether the button has been pressed/released.
+
+    def handler(button, pressed):
+        # Your code here
+
+    :param buttons: A single button, or a list of buttons
+    :param handler: Optional: a function to bind as the handler
+
+    """
+
+    if buttons is None:
+        buttons = [BUTTON_A, BUTTON_B, BUTTON_C, BUTTON_D, BUTTON_E]
+
     if isinstance(buttons, int):
         buttons = [buttons]
 
@@ -176,7 +194,25 @@ def on_press(buttons, handler=None):
     else:
         return attach_handler
 
-def on_release(buttons, handler=None):
+def on_release(buttons=None, handler=None):
+    """Attach a release handler to one or more buttons.
+
+    This handler is fired when you let go of a button.
+
+    It will be passed two arguments, the button index and a
+    boolean indicating whether the button has been pressed/released.
+
+    def handler(button, pressed):
+        # Your code here
+
+    :param buttons: A single button, or a list of buttons
+    :param handler: Optional: a function to bind as the handler
+
+    """
+
+    if buttons is None:
+        buttons = [BUTTON_A, BUTTON_B, BUTTON_C, BUTTON_D, BUTTON_E]
+
     if isinstance(buttons, int):
         buttons = [buttons]
 
@@ -190,6 +226,25 @@ def on_release(buttons, handler=None):
         return attach_handler
 
 def set_pixel(r, g, b):
+    """Set the Button SHIM RGB pixel
+
+    Display an RGB colour on the Button SHIM pixel.
+
+    :param r: Amount of red, from 0 to 255
+    :param g: Amount of green, from 0 to 255
+    :param b: Amount of blue, from 0 to 255
+
+    """
+
+    if not isinstance(r, int) or r < 0 or r > 255:
+        raise ValueError("Argument r should be an int from 0 to 255")
+
+    if not isinstance(g, int) or g < 0 or g > 255:
+        raise ValueError("Argument g should be an int from 0 to 255")
+
+    if not isinstance(b, int) or b < 0 or b > 255:
+        raise ValueError("Argument b should be an int from 0 to 255")
+
     _write_byte(0)
     _write_byte(0)
     _write_byte(0b11101111)
