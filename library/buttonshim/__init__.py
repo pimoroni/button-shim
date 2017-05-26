@@ -26,12 +26,26 @@ REG_CONFIG = 0x03
 NUM_BUTTONS = 6
 
 BUTTON_A = 0
+"""Button A"""
 BUTTON_B = 1
+"""Button B"""
 BUTTON_C = 2
+"""Button C"""
 BUTTON_D = 3
+"""Button D"""
 BUTTON_E = 4
+"""Button E"""
 
 NAMES = ['A', 'B', 'C', 'D', 'E']
+"""Sometimes you want to print the plain text name of the button that's triggered.
+
+You can use::
+
+    buttonshim.NAMES[button_index]
+
+To accomplish this.
+
+"""
 
 LED_GAMMA = [
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -166,14 +180,15 @@ def _write_byte(byte):
 
 def on_press(buttons, handler=None):
     """Attach a press handler to one or more buttons.
-    
+
     This handler is fired when you press a button.
 
     It will be passed two arguments, the button index and a
-    boolean indicating whether the button has been pressed/released.
+    boolean indicating whether the button has been pressed/released::
 
-    def handler(button, pressed):
-        # Your code here
+        @buttonshim.on_press(buttonshim.BUTTON_A)
+        def handler(button, pressed):
+            # Your code here
 
     :param buttons: A single button, or a list of buttons
     :param handler: Optional: a function to bind as the handler
@@ -201,10 +216,11 @@ def on_release(buttons=None, handler=None):
     This handler is fired when you let go of a button.
 
     It will be passed two arguments, the button index and a
-    boolean indicating whether the button has been pressed/released.
+    boolean indicating whether the button has been pressed/released::
 
-    def handler(button, pressed):
-        # Your code here
+        @buttonshim.on_release(buttonshim.BUTTON_A)
+        def handler(button, pressed):
+            # Your code here
 
     :param buttons: A single button, or a list of buttons
     :param handler: Optional: a function to bind as the handler
@@ -234,6 +250,10 @@ def set_pixel(r, g, b):
     :param r: Amount of red, from 0 to 255
     :param g: Amount of green, from 0 to 255
     :param b: Amount of blue, from 0 to 255
+
+    You can use HTML colours directly with hexadecimal notation in Python. EG::
+
+        buttonshim.set_pixel(0xFF, 0x00, 0xFF)
 
     """
 

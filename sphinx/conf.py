@@ -17,7 +17,29 @@ import sphinx_rtd_theme
 
 sys.modules['RPi'] = mock.Mock()
 sys.modules['RPi.GPIO'] = mock.Mock()
+
 sys.modules['smbus'] = mock.Mock()
+
+class _SMBus:
+    def __init__(self, bus_id):
+        pass
+
+    def write_i2c_block_data(self, addr, reg, data):
+        pass
+
+    def write_word_data(self, addr, reg, data):
+        pass
+
+    def write_byte_data(self, addr, reg, data):
+        pass
+
+    def read_byte_data(self, addr, reg):
+        return 0
+
+    def read_word_data(self, addr, reg):
+        return 0
+
+sys.modules['smbus'].SMBus = _SMBus
 
 sys.path.insert(0, '../library/')
 

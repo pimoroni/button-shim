@@ -28,3 +28,25 @@ Set The Pixel
 .. automodule:: buttonshim
    :noindex:
    :members: set_pixel
+
+Handle A Button Press
+---------------------
+
+.. automodule:: buttonshim
+   :noindex:
+   :members: on_press
+
+Handle A Button Release
+-----------------------
+
+.. automodule:: buttonshim
+   :noindex:
+   :members: on_release
+
+Get The Name Of A Button
+------------------------
+
+.. automodule:: buttonshim
+   :noindex:
+   :members: NAMES
+
