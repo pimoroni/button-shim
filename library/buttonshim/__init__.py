@@ -47,6 +47,8 @@ To accomplish this.
 
 """
 
+ERROR_LIMIT = 10
+
 LED_GAMMA = [
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2,
@@ -84,17 +86,30 @@ def _run():
     global _running
     _running = True
     _last_states = 0b00011111
+    _errors = 0
 
     while _running:
-        #print(_led_queue.qsize())
+        led_data = None
+
         try:
             led_data = _led_queue.get(False)
-            _write(led_data)
             _led_queue.task_done()
+
         except queue.Empty:
             pass
 
-        states = _bus.read_byte_data(ADDR, REG_INPUT)
+        try:
+            if led_data:
+                for chunk in _chunk(led_data, 32):
+                    _bus.write_i2c_block_data(ADDR, REG_OUTPUT, chunk)
+
+            states = _bus.read_byte_data(ADDR, REG_INPUT)
+
+        except IOError as e:
+            _errors += 1
+            if _errors > ERROR_LIMIT:
+                _running = False
+                raise IOError("More than {} IO errors have occurred!".format(ERROR_LIMIT))
 
         if states != _last_states:
             for x in range(NUM_BUTTONS):
@@ -118,9 +133,10 @@ def _run():
 def _quit():
     global _running
 
-    _led_queue.join()
-    set_pixel(0, 0, 0)
-    _led_queue.join()
+    if _running:
+        _led_queue.join()
+        set_pixel(0, 0, 0)
+        _led_queue.join()
 
     _running = False
     _t_poll.join()
@@ -135,6 +151,8 @@ def _init():
     _t_poll = Thread(target=_run)
     _t_poll.daemon = True
     _t_poll.start()
+
+    set_pixel(0, 0, 0)
 
     atexit.register(_quit)
 
@@ -164,10 +182,6 @@ def _enqueue():
 def _chunk(l, n):
     for i in range(0, len(l)+1, n):
         yield l[i:i + n]
-
-def _write(data):
-    for chunk in _chunk(data, 32):
-        _bus.write_i2c_block_data(ADDR, REG_OUTPUT, chunk)
 
 def _write_byte(byte):
     for x in range(8):
