@@ -7,6 +7,7 @@ import time
 from sys import version_info
 
 DEVICE = "PCM"
+VOL_REPEAT = 0.2
 
 print("""
 Button SHIM: volume.py
@@ -64,7 +65,7 @@ def button_b(button, pressed):
     buttonshim.set_pixel(0xff, 0x00, 0x00)
 
 # Volume Up
-@buttonshim.on_press(buttonshim.BUTTON_C, repeat=True)
+@buttonshim.on_press(buttonshim.BUTTON_C, repeat=True, repeat_time=VOL_REPEAT)
 def button_c(button, pressed):
     global volume
 
@@ -80,7 +81,7 @@ def button_c(button, pressed):
     buttonshim.set_pixel(int(0xff * (1.0 - scale)), int(0xff * scale), 0x00)
 
 # Volume Down
-@buttonshim.on_press(buttonshim.BUTTON_D, repeat=True)
+@buttonshim.on_press(buttonshim.BUTTON_D, repeat=True, repeat_time=VOL_REPEAT)
 def button_d(button, pressed):
     global volume
 

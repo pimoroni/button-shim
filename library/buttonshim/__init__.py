@@ -87,9 +87,13 @@ class Handler():
     def __init__(self):
         self.press = None
         self.release = None
+
         self.hold = None
-        self.repeat = False
         self.hold_time = 0
+
+        self.repeat = False
+        self.repeat_time = 0
+
         self.t_pressed = 0
         self.t_repeat = 0
         self.hold_fired = False
@@ -125,51 +129,41 @@ def _run():
                 _running = False
                 raise IOError("More than {} IO errors have occurred!".format(ERROR_LIMIT))
 
-        if _states != _last_states:
-            for x in range(NUM_BUTTONS):
-                last = (_last_states >> x) & 1
-                curr = (_states >> x) & 1
 
-                # If last > curr then it's a transition from 1 to 0
-                # since the buttons are active low, that's a press event
-                if last > curr:
-                    _handlers[x].t_pressed = time.time()
-                    _handlers[x].hold_fired = False
-
-                    if callable(_handlers[x].press):
-                        _handlers[x].t_repeat = time.time()
-                        Thread(target=_handlers[x].press, args=(x, True)).start()
-
-                    continue
-
-                if last < curr and callable(_handlers[x].release):
-                    Thread(target=_handlers[x].release, args=(x, False)).start()
-                    continue
-
-        for x in range(NUM_BUTTONS):
+        for x in range(NUM_BUTTONS - 1):
+            last = (_last_states >> x) & 1
             curr = (_states >> x) & 1
-            press = _handlers[x].press
-            hold = _handlers[x].hold
-            last_repeat = _handlers[x].t_repeat
-            last_press = _handlers[x].t_pressed
-            hold_time = _handlers[x].hold_time
-            repeat = _handlers[x].repeat
+            handler = _handlers[x]
+
+            # If last > curr then it's a transition from 1 to 0
+            # since the buttons are active low, that's a press event
+            if last > curr:
+                handler.t_pressed = time.time()
+                handler.hold_fired = False
+
+                if callable(handler.press):
+                    handler.t_repeat = time.time()
+                    Thread(target=handler.press, args=(x, True)).start()
+
+                continue
+
+            if last < curr and callable(handler.release):
+                Thread(target=handler.release, args=(x, False)).start()
+                continue
 
             if curr == 0:
-                if callable(hold) and _handlers[x].hold_fired == False and (time.time() - last_press) > hold_time:
-                    Thread(target=hold, args=(x,)).start()
-                    _handlers[x].hold_fired = True
+                if callable(handler.hold) and handler.hold_fired == False and (time.time() - handler.t_pressed) > handler.hold_time:
+                    Thread(target=handler.hold, args=(x,)).start()
+                    handler.hold_fired = True
 
-                if repeat and callable(press) and (time.time() - last_repeat) > 0.5:
+                if handler.repeat and callable(handler.press) and (time.time() - handler.t_repeat) > handler.repeat_time:
                     _handlers[x].t_repeat = time.time()
-                    try:
-                        Thread(target=press, args=(x, True)).start()
-                    except TypeError:
-                        Thread(target=press, args=(x, True)).start()
+                    Thread(target=_handlers[x].press, args=(x, True)).start()
 
         _last_states = _states
 
-        time.sleep(0.002)
+        #time.sleep(0.002)
+        time.sleep(0.01)
 
 def _quit():
     global _running
@@ -266,7 +260,7 @@ def on_hold(buttons, handler=None, hold_time=2):
     else:
         return attach_handler
 
-def on_press(buttons, handler=None, repeat=False):
+def on_press(buttons, handler=None, repeat=False, repeat_time=0.5):
     """Attach a press handler to one or more buttons.
 
     This handler is fired when you press a button.
@@ -293,6 +287,7 @@ def on_press(buttons, handler=None, repeat=False):
         for button in buttons:
             _handlers[button].press = handler
             _handlers[button].repeat = repeat
+            _handlers[button].repeat_time = repeat_time
 
     if handler is not None:
         attach_handler(handler)
