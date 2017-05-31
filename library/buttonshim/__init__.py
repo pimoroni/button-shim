@@ -73,6 +73,7 @@ LED_GAMMA = [
 
 _reg_queue = []
 _update_queue = []
+_brightness = 0.5
 
 _led_queue = queue.Queue()
 
@@ -80,10 +81,23 @@ _t_poll = None
 
 _running = False
 
-_handlers = [[None, None] for x in range(NUM_BUTTONS)]
+_states = 0b00011111
+
+class Handler():
+    def __init__(self):
+        self.press = None
+        self.release = None
+        self.hold = None
+        self.repeat = False
+        self.hold_time = 0
+        self.t_pressed = 0
+        self.t_repeat = 0
+        self.hold_fired = False
+
+_handlers = [Handler() for x in range(NUM_BUTTONS)]
 
 def _run():
-    global _running
+    global _running, _states
     _running = True
     _last_states = 0b00011111
     _errors = 0
@@ -103,7 +117,7 @@ def _run():
                 for chunk in _chunk(led_data, 32):
                     _bus.write_i2c_block_data(ADDR, REG_OUTPUT, chunk)
 
-            states = _bus.read_byte_data(ADDR, REG_INPUT)
+            _states = _bus.read_byte_data(ADDR, REG_INPUT)
 
         except IOError as e:
             _errors += 1
@@ -111,22 +125,49 @@ def _run():
                 _running = False
                 raise IOError("More than {} IO errors have occurred!".format(ERROR_LIMIT))
 
-        if states != _last_states:
+        if _states != _last_states:
             for x in range(NUM_BUTTONS):
-                _last = (_last_states >> x) & 1
-                _curr = (states >> x) & 1
+                last = (_last_states >> x) & 1
+                curr = (_states >> x) & 1
 
-                # If _last > _curr then it's a transition from 1 to 0
+                # If last > curr then it's a transition from 1 to 0
                 # since the buttons are active low, that's a press event
-                if _last > _curr and callable(_handlers[x][0]):
-                    _handlers[x][0](x, True)
+                if last > curr:
+                    _handlers[x].t_pressed = time.time()
+                    _handlers[x].hold_fired = False
+
+                    if callable(_handlers[x].press):
+                        _handlers[x].t_repeat = time.time()
+                        Thread(target=_handlers[x].press, args=(x, True)).start()
+
                     continue
 
-                if _last < _curr and callable(_handlers[x][1]):
-                    _handlers[x][1](x, False)
+                if last < curr and callable(_handlers[x].release):
+                    Thread(target=_handlers[x].release, args=(x, False)).start()
                     continue
 
-        _last_states = states
+        for x in range(NUM_BUTTONS):
+            curr = (_states >> x) & 1
+            press = _handlers[x].press
+            hold = _handlers[x].hold
+            last_repeat = _handlers[x].t_repeat
+            last_press = _handlers[x].t_pressed
+            hold_time = _handlers[x].hold_time
+            repeat = _handlers[x].repeat
+
+            if curr == 0:
+                if callable(hold) and _handlers[x].hold_fired == False and (time.time() - last_press) > hold_time:
+                    Thread(target=hold, args=(x,)).start()
+                    _handlers[x].hold_fired = True
+
+                if repeat and callable(press) and (time.time() - last_repeat) > 0.5:
+                    _handlers[x].t_repeat = time.time()
+                    try:
+                        Thread(target=press, args=(x, True)).start()
+                    except TypeError:
+                        Thread(target=press, args=(x, True)).start()
+
+        _last_states = _states
 
         time.sleep(0.002)
 
@@ -192,7 +233,40 @@ def _write_byte(byte):
         _set_bit(LED_CLOCK, 1)
         byte <<= 1
 
-def on_press(buttons, handler=None):
+def on_hold(buttons, handler=None, hold_time=2):
+    """Attach a hold handler to one or more buttons.
+
+    This handler is fired when you hold a button for hold_time seconds.
+
+    It will be passed one argument, the button index::
+
+        @buttonshim.on_press(buttonshim.BUTTON_A)
+        def handler(button):
+            # Your code here
+
+    :param buttons: A single button, or a list of buttons
+    :param handler: Optional: a function to bind as the handler
+    :param hold_time: Optional: the hold time in seconds (default 2)
+
+    """
+
+    if buttons is None:
+        buttons = [BUTTON_A, BUTTON_B, BUTTON_C, BUTTON_D, BUTTON_E]
+
+    if isinstance(buttons, int):
+        buttons = [buttons]
+
+    def attach_handler(handler):
+        for button in buttons:
+            _handlers[button].hold = handler
+            _handlers[button].hold_time = hold_time
+
+    if handler is not None:
+        attach_handler(handler)
+    else:
+        return attach_handler
+
+def on_press(buttons, handler=None, repeat=False):
     """Attach a press handler to one or more buttons.
 
     This handler is fired when you press a button.
@@ -217,7 +291,8 @@ def on_press(buttons, handler=None):
 
     def attach_handler(handler):
         for button in buttons:
-            _handlers[button][0] = handler
+            _handlers[button].press = handler
+            _handlers[button].repeat = repeat
 
     if handler is not None:
         attach_handler(handler)
@@ -249,12 +324,23 @@ def on_release(buttons=None, handler=None):
 
     def attach_handler(handler):
         for button in buttons:
-            _handlers[button][1] = handler
+            _handlers[button].release = handler
 
     if handler is not None:
         attach_handler(handler)
     else:
         return attach_handler
+
+def set_brightness(brightness):
+    global _brightness
+
+    if not isinstance(brightness, int) and not isinstance(brightness, float):
+        raise ValueError("Brightness should be an int or float")
+
+    if brightness < 0.0 or brightness > 1.0:
+        raise ValueError("Brightness should be between 0.0 and 1.0")
+
+    _brightness = brightness
 
 def set_pixel(r, g, b):
     """Set the Button SHIM RGB pixel
@@ -279,6 +365,9 @@ def set_pixel(r, g, b):
 
     if not isinstance(b, int) or b < 0 or b > 255:
         raise ValueError("Argument b should be an int from 0 to 255")
+
+
+    r, g, b = [int(x * _brightness) for x in (r, g, b)]
 
     _write_byte(0)
     _write_byte(0)
