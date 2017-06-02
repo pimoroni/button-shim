@@ -274,6 +274,8 @@ def on_press(buttons, handler=None, repeat=False, repeat_time=0.5):
 
     :param buttons: A single button, or a list of buttons
     :param handler: Optional: a function to bind as the handler
+    :param repeat: Optional: Repeat the handler if the button is held
+    :param repeat_time: Optional: Time, in seconds, after which to repeat
 
     """
 

@@ -43,6 +43,13 @@ Handle A Button Release
    :noindex:
    :members: on_release
 
+Handle A Button Hold
+--------------------
+
+.. automodule:: buttonshim
+   :noindex:
+   :members: on_hold
+
 Get The Name Of A Button
 ------------------------
 
