@@ -14,7 +14,7 @@ KEYCODES = [e.KEY_A, e.KEY_B, e.KEY_C, e.KEY_D, e.KEY_E]
 print("""
 Button SHIM: keyboard.py
 
-Control the audio volume on your Raspberry Pi!
+Trigger keyboard key presses with Button SHIM.
 
 Press Ctrl+C to exit.
 
