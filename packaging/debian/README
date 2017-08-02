@@ -1,0 +1,6 @@
+README
+
+Button SHIM provides one super-bright RGB LED indicator and 5 buttons. Ideal for adding input to your Raspberry Pi project.
+
+Learn more: https://shop.pimoroni.com/products/button-shim
+For examples run: `curl -sS get.pimoroni.com/button-shim | bash`

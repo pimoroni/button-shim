@@ -1,0 +1,31 @@
+Source: buttonshim
+Maintainer: Phil Howard <phil@pimoroni.com>
+Homepage: https://github.com/pimoroni/button-shim
+Section: python
+Priority: extra
+Build-Depends: debhelper (>= 9.0.0), dh-python, python-all (>= 2.7), python-setuptools, python3-all (>= 3.4), python3-setuptools
+Standards-Version: 3.9.6
+X-Python-Version: >= 2.7
+X-Python3-Version: >= 3.4
+
+Package: python-buttonshim
+Architecture: all
+Section: python
+Depends: ${misc:Depends}, ${python:Depends}, python-smbus
+Suggests: python-psutil, python-requests
+Description: Python library for the Pimoroni Button SHIM
+ Button SHIM provides one super-bright RGB LED indicator and 5 buttons.
+ Ideal for adding input to your Raspberry Pi project.
+ .
+ This is the Python 2 version of the package.
+
+Package: python3-buttonshim
+Architecture: all
+Section: python
+Depends: ${misc:Depends}, ${python3:Depends}, python3-smbus
+Suggests: python3-psutil, python3-requests
+Description: Python library for the Pimoroni Button SHIM
+ Button SHIM provides one super-bright RGB LED indicator and 5 buttons.
+ Ideal for adding input to your Raspberry Pi project.
+ .
+ This is the Python 3 version of the package.
