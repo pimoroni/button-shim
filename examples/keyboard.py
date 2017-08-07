@@ -24,8 +24,8 @@ try:
     ui = UInput({e.EV_KEY: KEYCODES}, name="Button-SHIM", bustype=e.BUS_USB)
 
 except uinput.UInputError as e:
-    sys.stdout.write(e.message)
-    sys.stdout.write("Have you tried running as root? sudo {}".format(sys.argv[0]))
+    print(e.message)
+    print("Have you tried running as root? sudo {}".format(sys.argv[0]))
     sys.exit(0)
 
 
