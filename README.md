@@ -1,4 +1,3 @@
-![Blinkt!](button-shim-logo.png)
 https://shop.pimoroni.com/products/button-shim
 
 Five tactile push buttons and one super-bright RGB LED indicator, ideal for adding extra input and visual notifications to your Raspberry Pi alongside most other HATs and pHATs!
