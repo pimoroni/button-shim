@@ -130,7 +130,7 @@ def _run():
                 raise IOError("More than {} IO errors have occurred!".format(ERROR_LIMIT))
 
 
-        for x in range(NUM_BUTTONS - 1):
+        for x in range(NUM_BUTTONS):
             last = (_last_states >> x) & 1
             curr = (_states >> x) & 1
             handler = _handlers[x]
