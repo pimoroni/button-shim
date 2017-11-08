@@ -96,6 +96,10 @@ sys.path.insert(0, ".")
 
 import buttonshim
 
+@buttonshim.on_press(buttonshim.BUTTON_A)
+def press(button, state):
+    pass
+
 assert regs[REG_CONFIG] == 31, "REG_CONFIG should be set to 31"
 assert regs[REG_POLARITY] == 0, "REG_POLARITY should be set to 0"
 assert regs[REG_OUTPUT] == 0, "REG_OUTPUT should be set to 0"

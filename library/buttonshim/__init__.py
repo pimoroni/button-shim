@@ -13,7 +13,7 @@ ADDR = 0x3f
 
 __version__ = '0.0.1'
 
-_bus = smbus.SMBus(1)
+_bus = None
 
 LED_DATA = 7
 LED_CLOCK = 6
@@ -177,7 +177,12 @@ def _quit():
     _t_poll.join()
 
 def _init():
-    global _t_poll
+    global _t_poll, _bus
+
+    if _bus is not None:
+        return
+
+    _bus = smbus.SMBus(1)
 
     _bus.write_byte_data(ADDR, REG_CONFIG, 0b00011111)
     _bus.write_byte_data(ADDR, REG_POLARITY, 0b00000000)
@@ -244,6 +249,8 @@ def on_hold(buttons, handler=None, hold_time=2):
 
     """
 
+    _init()
+
     if buttons is None:
         buttons = [BUTTON_A, BUTTON_B, BUTTON_C, BUTTON_D, BUTTON_E]
 
@@ -279,6 +286,8 @@ def on_press(buttons, handler=None, repeat=False, repeat_time=0.5):
 
     """
 
+    _init()
+
     if buttons is None:
         buttons = [BUTTON_A, BUTTON_B, BUTTON_C, BUTTON_D, BUTTON_E]
 
@@ -313,6 +322,8 @@ def on_release(buttons=None, handler=None):
 
     """
 
+    _init()
+
     if buttons is None:
         buttons = [BUTTON_A, BUTTON_B, BUTTON_C, BUTTON_D, BUTTON_E]
 
@@ -330,6 +341,8 @@ def on_release(buttons=None, handler=None):
 
 def set_brightness(brightness):
     global _brightness
+
+    _init()
 
     if not isinstance(brightness, int) and not isinstance(brightness, float):
         raise ValueError("Brightness should be an int or float")
@@ -353,6 +366,7 @@ def set_pixel(r, g, b):
         buttonshim.set_pixel(0xFF, 0x00, 0xFF)
 
     """
+    _init()
 
     if not isinstance(r, int) or r < 0 or r > 255:
         raise ValueError("Argument r should be an int from 0 to 255")
@@ -375,8 +389,6 @@ def set_pixel(r, g, b):
     _write_byte(0)
     _write_byte(0)
     _enqueue()
-
-_init()
 
 if __name__ == "__main__":
     while True:
