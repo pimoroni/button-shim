@@ -23,7 +23,7 @@ REG_OUTPUT = 0x01
 REG_POLARITY = 0x02
 REG_CONFIG = 0x03
 
-NUM_BUTTONS = 6
+NUM_BUTTONS = 5
 
 BUTTON_A = 0
 """Button A"""
@@ -130,7 +130,7 @@ def _run():
                 raise IOError("More than {} IO errors have occurred!".format(ERROR_LIMIT))
 
 
-        for x in range(NUM_BUTTONS - 1):
+        for x in range(NUM_BUTTONS):
             last = (_last_states >> x) & 1
             curr = (_states >> x) & 1
             handler = _handlers[x]
