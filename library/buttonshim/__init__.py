@@ -391,17 +391,18 @@ def set_pixel(r, g, b):
     _enqueue()
 
 if __name__ == "__main__":
+    @on_press([BUTTON_A, BUTTON_B, BUTTON_C, BUTTON_D, BUTTON_E])
+    def handle_press(button, state):
+        print("PRESS: Button {} ({}) is {}".format(button, NAMES[button], state))
+
+    @on_release([BUTTON_A, BUTTON_B, BUTTON_C, BUTTON_D, BUTTON_E])
+    def handle_release(button, state):
+        print("RELEASE: Button {} ({}) is {}".format(button, NAMES[button], state))
+            
     while True:
         hue = (time.time() * 100 % 360) / 360.0
         r, g, b = [int(c * 255) for c in hsv_to_rgb(hue, 1.0, 1.0)]
 
         set_pixel(r, g, b)
 
-        @on_press([BUTTON_A, BUTTON_B, BUTTON_C, BUTTON_D, BUTTON_E])
-        def handle_press(button, state):
-            print("PRESS: Button {} ({}) is {}".format(button, NAMES[button], state))
-
-        @on_release([BUTTON_A, BUTTON_B, BUTTON_C, BUTTON_D, BUTTON_E])
-        def handle_release(button, state):
-            print("RELEASE: Button {} ({}) is {}".format(button, NAMES[button], state))
-
+        time.sleep(0.1)
