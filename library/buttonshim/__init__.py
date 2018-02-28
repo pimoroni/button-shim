@@ -49,6 +49,8 @@ To accomplish this.
 
 ERROR_LIMIT = 10
 
+FPS = 60
+
 LED_GAMMA = [
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2,
@@ -162,8 +164,7 @@ def _run():
 
         _last_states = _states
 
-        #time.sleep(0.002)
-        time.sleep(0.01)
+        time.sleep(1.0 / FPS)
 
 def _quit():
     global _running
@@ -176,7 +177,7 @@ def _quit():
     _running = False
     _t_poll.join()
 
-def _init():
+def setup():
     global _t_poll, _bus
 
     if _bus is not None:
@@ -249,7 +250,7 @@ def on_hold(buttons, handler=None, hold_time=2):
 
     """
 
-    _init()
+    setup()
 
     if buttons is None:
         buttons = [BUTTON_A, BUTTON_B, BUTTON_C, BUTTON_D, BUTTON_E]
@@ -286,7 +287,7 @@ def on_press(buttons, handler=None, repeat=False, repeat_time=0.5):
 
     """
 
-    _init()
+    setup()
 
     if buttons is None:
         buttons = [BUTTON_A, BUTTON_B, BUTTON_C, BUTTON_D, BUTTON_E]
@@ -322,7 +323,7 @@ def on_release(buttons=None, handler=None):
 
     """
 
-    _init()
+    setup()
 
     if buttons is None:
         buttons = [BUTTON_A, BUTTON_B, BUTTON_C, BUTTON_D, BUTTON_E]
@@ -342,7 +343,7 @@ def on_release(buttons=None, handler=None):
 def set_brightness(brightness):
     global _brightness
 
-    _init()
+    setup()
 
     if not isinstance(brightness, int) and not isinstance(brightness, float):
         raise ValueError("Brightness should be an int or float")
@@ -366,7 +367,7 @@ def set_pixel(r, g, b):
         buttonshim.set_pixel(0xFF, 0x00, 0xFF)
 
     """
-    _init()
+    setup()
 
     if not isinstance(r, int) or r < 0 or r > 255:
         raise ValueError("Argument r should be an int from 0 to 255")
