@@ -72,3 +72,7 @@ sudo python3 setup.py install
 * Function reference - http://docs.pimoroni.com/buttonshim/
 * GPIO Pinout - https://pinout.xyz/pinout/buttonshim
 * Get help - http://forums.pimoroni.com/c/support
+
+## Unofficial / Third-party libraries
+
+* Go library by Tom Mitchell - https://github.com/tomnz/button-shim-go
