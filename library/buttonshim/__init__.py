@@ -11,7 +11,7 @@ except ImportError:
 
 ADDR = 0x3f
 
-__version__ = '0.0.1'
+__version__ = '0.0.2'
 
 _bus = None
 
@@ -238,6 +238,8 @@ def on_hold(buttons, handler=None, hold_time=2):
 
     This handler is fired when you hold a button for hold_time seconds.
 
+    When fired it will run in its own Thread.
+
     It will be passed one argument, the button index::
 
         @buttonshim.on_press(buttonshim.BUTTON_A)
@@ -272,6 +274,8 @@ def on_press(buttons, handler=None, repeat=False, repeat_time=0.5):
     """Attach a press handler to one or more buttons.
 
     This handler is fired when you press a button.
+
+    When fired it will be run in its own Thread.
 
     It will be passed two arguments, the button index and a
     boolean indicating whether the button has been pressed/released::
@@ -310,6 +314,8 @@ def on_release(buttons=None, handler=None):
     """Attach a release handler to one or more buttons.
 
     This handler is fired when you let go of a button.
+
+    When fired it will be run in its own Thread.
 
     It will be passed two arguments, the button index and a
     boolean indicating whether the button has been pressed/released::

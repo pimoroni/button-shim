@@ -1,3 +1,9 @@
+0.0.2
+-----
+
+* Fix: Deferred setup to prevent import side-effects
+* Fix: Corrected NUM_BUTTONS to 5 from 6
+
 0.0.1
 -----
 
