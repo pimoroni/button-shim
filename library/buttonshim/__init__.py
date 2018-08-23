@@ -242,7 +242,7 @@ def on_hold(buttons, handler=None, hold_time=2):
 
     It will be passed one argument, the button index::
 
-        @buttonshim.on_press(buttonshim.BUTTON_A)
+        @buttonshim.on_hold(buttonshim.BUTTON_A)
         def handler(button):
             # Your code here
 
