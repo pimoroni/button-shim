@@ -85,6 +85,7 @@ _running = False
 
 _states = 0b00011111
 
+
 class Handler():
     def __init__(self):
         self.press = None
@@ -100,7 +101,9 @@ class Handler():
         self.t_repeat = 0
         self.hold_fired = False
 
+
 _handlers = [Handler() for x in range(NUM_BUTTONS)]
+
 
 def _run():
     global _running, _states
@@ -125,12 +128,11 @@ def _run():
 
             _states = _bus.read_byte_data(ADDR, REG_INPUT)
 
-        except IOError as e:
+        except IOError:
             _errors += 1
             if _errors > ERROR_LIMIT:
                 _running = False
                 raise IOError("More than {} IO errors have occurred!".format(ERROR_LIMIT))
-
 
         for x in range(NUM_BUTTONS):
             last = (_last_states >> x) & 1
@@ -154,7 +156,7 @@ def _run():
                 continue
 
             if curr == 0:
-                if callable(handler.hold) and handler.hold_fired == False and (time.time() - handler.t_pressed) > handler.hold_time:
+                if callable(handler.hold) and not handler.hold_fired and (time.time() - handler.t_pressed) > handler.hold_time:
                     Thread(target=handler.hold, args=(x,)).start()
                     handler.hold_fired = True
 
@@ -166,6 +168,7 @@ def _run():
 
         time.sleep(1.0 / FPS)
 
+
 def _quit():
     global _running
 
@@ -176,6 +179,7 @@ def _quit():
 
     _running = False
     _t_poll.join()
+
 
 def setup():
     global _t_poll, _bus
@@ -197,6 +201,7 @@ def setup():
 
     atexit.register(_quit)
 
+
 def _set_bit(pin, value):
     global _reg_queue
 
@@ -204,6 +209,7 @@ def _set_bit(pin, value):
         _reg_queue[-1] |= (1 << pin)
     else:
         _reg_queue[-1] &= ~(1 << pin)
+
 
 def _next():
     global _reg_queue
@@ -213,6 +219,7 @@ def _next():
     else:
         _reg_queue.append(_reg_queue[-1])
 
+
 def _enqueue():
     global _reg_queue
 
@@ -220,9 +227,11 @@ def _enqueue():
 
     _reg_queue = []
 
+
 def _chunk(l, n):
     for i in range(0, len(l)+1, n):
         yield l[i:i + n]
+
 
 def _write_byte(byte):
     for x in range(8):
@@ -232,6 +241,7 @@ def _write_byte(byte):
         _next()
         _set_bit(LED_CLOCK, 1)
         byte <<= 1
+
 
 def on_hold(buttons, handler=None, hold_time=2):
     """Attach a hold handler to one or more buttons.
@@ -251,7 +261,6 @@ def on_hold(buttons, handler=None, hold_time=2):
     :param hold_time: Optional: the hold time in seconds (default 2)
 
     """
-
     setup()
 
     if buttons is None:
@@ -269,6 +278,7 @@ def on_hold(buttons, handler=None, hold_time=2):
         attach_handler(handler)
     else:
         return attach_handler
+
 
 def on_press(buttons, handler=None, repeat=False, repeat_time=0.5):
     """Attach a press handler to one or more buttons.
@@ -290,7 +300,6 @@ def on_press(buttons, handler=None, repeat=False, repeat_time=0.5):
     :param repeat_time: Optional: Time, in seconds, after which to repeat
 
     """
-
     setup()
 
     if buttons is None:
@@ -310,6 +319,7 @@ def on_press(buttons, handler=None, repeat=False, repeat_time=0.5):
     else:
         return attach_handler
 
+
 def on_release(buttons=None, handler=None):
     """Attach a release handler to one or more buttons.
 
@@ -328,7 +338,6 @@ def on_release(buttons=None, handler=None):
     :param handler: Optional: a function to bind as the handler
 
     """
-
     setup()
 
     if buttons is None:
@@ -346,6 +355,7 @@ def on_release(buttons=None, handler=None):
     else:
         return attach_handler
 
+
 def set_brightness(brightness):
     global _brightness
 
@@ -358,6 +368,7 @@ def set_brightness(brightness):
         raise ValueError("Brightness should be between 0.0 and 1.0")
 
     _brightness = brightness
+
 
 def set_pixel(r, g, b):
     """Set the Button SHIM RGB pixel
@@ -384,7 +395,6 @@ def set_pixel(r, g, b):
     if not isinstance(b, int) or b < 0 or b > 255:
         raise ValueError("Argument b should be an int from 0 to 255")
 
-
     r, g, b = [int(x * _brightness) for x in (r, g, b)]
 
     _write_byte(0)
@@ -397,6 +407,7 @@ def set_pixel(r, g, b):
     _write_byte(0)
     _enqueue()
 
+
 if __name__ == "__main__":
     @on_press([BUTTON_A, BUTTON_B, BUTTON_C, BUTTON_D, BUTTON_E])
     def handle_press(button, state):
@@ -405,7 +416,7 @@ if __name__ == "__main__":
     @on_release([BUTTON_A, BUTTON_B, BUTTON_C, BUTTON_D, BUTTON_E])
     def handle_release(button, state):
         print("RELEASE: Button {} ({}) is {}".format(button, NAMES[button], state))
-            
+
     while True:
         hue = (time.time() * 100 % 360) / 360.0
         r, g, b = [int(c * 255) for c in hsv_to_rgb(hue, 1.0, 1.0)]
