@@ -10,6 +10,8 @@ Buttom SHIM: Long Press
 Demonstrates how you might handle both a
 short and long press on the same button.
 
+Press or hold the A button.
+
 Press Ctrl+C to exit!
 
 """)
@@ -30,8 +32,8 @@ def release_handler(button, pressed):
         print("Short press detected!")
 
 
-@buttonshim.hold(buttonshim.BUTTON_A, hold_time=2)
-def hold_handler(button, pressed):
+@buttonshim.on_hold(buttonshim.BUTTON_A, hold_time=2)
+def hold_handler(button):
     global button_was_held
     button_was_held = True
     print("Long press detected!")
