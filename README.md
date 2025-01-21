@@ -6,7 +6,7 @@ Five tactile push buttons and one super-bright RGB LED indicator, ideal for addi
 
 ### Full install (recommended):
 
-We've created an easy installation script that will install all pre-requisites and get your Buttom SHIM.
+We've created an easy installation script that will install all pre-requisites and get your Button SHIM.
 up and running with minimal efforts. To run it, fire up Terminal which you'll find in Menu -> Accessories -> Terminal
 on your Raspberry Pi desktop, as illustrated below:
 
