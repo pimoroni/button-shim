@@ -1,8 +1,9 @@
-import smbus
-import time
-from threading import Thread
 import atexit
+import time
 from colorsys import hsv_to_rgb
+from threading import Thread
+
+import smbus2
 
 try:
     import queue
@@ -187,7 +188,7 @@ def setup():
     if _bus is not None:
         return
 
-    _bus = smbus.SMBus(1)
+    _bus = smbus2.SMBus(1)
 
     _bus.write_byte_data(ADDR, REG_CONFIG, 0b00011111)
     _bus.write_byte_data(ADDR, REG_POLARITY, 0b00000000)
@@ -228,9 +229,9 @@ def _enqueue():
     _reg_queue = []
 
 
-def _chunk(l, n):
-    for i in range(0, len(l)+1, n):
-        yield l[i:i + n]
+def _chunk(data, size):
+    for i in range(0, len(data) + 1, size):
+        yield data[i:i + size]
 
 
 def _write_byte(byte):

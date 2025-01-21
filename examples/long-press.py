@@ -1,11 +1,11 @@
 #!/usr/bin/env python
 
 import signal
+
 import buttonshim
 
-
 print("""
-Buttom SHIM: Long Press
+Button SHIM: Long Press
 
 Demonstrates how you might handle both a
 short and long press on the same button.

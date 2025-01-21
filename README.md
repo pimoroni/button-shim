@@ -1,70 +1,66 @@
+[![Build Status](https://github.com/pimoroni/button-shim/actions/workflows/test.yml/badge.svg)](https://github.com/pimoroni/button-shim/actions/workflows/test.yml)
+[![Coverage Status](https://coveralls.io/repos/github/pimoroni/button-shim/badge.svg?branch=main)](https://coveralls.io/github/pimoroni/button-shim?branch=main)
+[![PyPi Package](https://img.shields.io/pypi/v/buttonshim.svg)](https://pypi.python.org/pypi/buttonshim)
+[![Python Versions](https://img.shields.io/pypi/pyversions/buttonshim.svg)](https://pypi.python.org/pypi/buttonshim)
+
 https://shop.pimoroni.com/products/button-shim
 
 Five tactile push buttons and one super-bright RGB LED indicator, ideal for adding extra input and visual notifications to your Raspberry Pi alongside most other HATs and pHATs!
 
-## Installing
+# Installing
 
-### Full install (recommended):
+We'd recommend using this library with Raspberry Pi OS Bookworm or later. It requires Python ≥3.7.
 
-We've created an easy installation script that will install all pre-requisites and get your Buttom SHIM.
-up and running with minimal efforts. To run it, fire up Terminal which you'll find in Menu -> Accessories -> Terminal
+## Full install (recommended):
+
+We've created an easy installation script that will install all pre-requisites and get you up and running with minimal efforts. To run it, fire up Terminal which you'll find in Menu -> Accessories -> Terminal
 on your Raspberry Pi desktop, as illustrated below:
 
 ![Finding the terminal](http://get.pimoroni.com/resources/github-repo-terminal.png)
 
-In the new terminal window type the command exactly as it appears below (check for typos) and follow the on-screen instructions:
+In the new terminal window type the commands exactly as it appears below (check for typos) and follow the on-screen instructions:
 
 ```bash
-curl https://get.pimoroni.com/buttonshim | bash
+git clone https://github.com/pimoroni/button-shim
+cd button-shim
+./install.sh
 ```
 
-Alternatively, on Raspbian, you can download the `pimoroni-dashboard` and install your product by browsing to the relevant entry:
+**Note** Libraries will be installed in the "pimoroni" virtual environment, you will need to activate it to run examples:
+
+```
+source ~/.virtualenvs/pimoroni/bin/activate
+```
+
+## Development:
+
+If you want to contribute, or like living on the edge of your seat by having the latest code, you can install the development version like so:
 
 ```bash
-sudo apt-get install pimoroni
+git clone https://github.com/pimoroni/button-shim
+cd button-shim
+./install.sh --unstable
 ```
-(you will find the Dashboard under 'Accessories' too, in the Pi menu - or just run `pimoroni-dashboard` at the command line)
 
-If you choose to download examples you'll find them in `/home/pi/Pimoroni/buttonshim/`.
+## Install stable library from PyPi and configure manually
 
-### Manual install:
+* Set up a virtual environment: `python3 -m venv --system-site-packages $HOME/.virtualenvs/pimoroni`
+* Switch to the virtual environment: `source ~/.virtualenvs/pimoroni/bin/activate`
+* Install the library: `pip install buttonshim`
 
-#### Library install for Python 3:
+In some cases you may need to us `sudo` or install pip with: `sudo apt install python3-pip`.
 
-on Raspbian:
+This will not make any configuration changes, so you may also need to enable:
+
+* i2c: `sudo raspi-config nonint do_i2c 0`
+
+You can optionally run `sudo raspi-config` or the graphical Raspberry Pi Configuration UI to enable interfaces.
+
+Some of the examples have additional dependencies. You can install them with:
 
 ```bash
-sudo apt-get install python3-buttonshim
+pip install -r requirements-examples.txt
 ```
-
-other environments: 
-
-```bash
-sudo pip3 install buttonshim
-```
-
-#### Library install for Python 2:
-
-on Raspbian:
-
-```bash
-sudo apt-get install python-buttonshim
-```
-
-other environments: 
-
-```bash
-sudo pip2 install buttonshim
-```
-
-### Development:
-
-If you want to contribute, or like living on the edge of your seat by having the latest code, you should clone this repository, `cd` to the library directory, and run:
-
-```bash
-sudo python3 setup.py install
-```
-(or `sudo python setup.py install` whichever your primary Python environment may be)
 
 ## Documentation & Support
 
