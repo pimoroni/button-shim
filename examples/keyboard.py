@@ -1,11 +1,14 @@
 #!/usr/bin/env python
 
 import signal
-import buttonshim
 import sys
 
+import buttonshim
+
 try:
-    from evdev import uinput, UInput, ecodes as e
+    from evdev import UInput
+    from evdev import ecodes as e
+    from evdev import uinput
 except ImportError:
     exit("This library requires the evdev module\nInstall with: sudo pip install evdev")
 

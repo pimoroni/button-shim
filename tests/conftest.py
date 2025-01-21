@@ -1,6 +1,8 @@
-import pytest
 import sys
+
 import mock
+import pytest
+
 
 class SMBus:
     REG_INPUT = 0x00

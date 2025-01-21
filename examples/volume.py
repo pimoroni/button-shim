@@ -1,10 +1,11 @@
 #!/usr/bin/env python
 
 import signal
-import buttonshim
 import subprocess
 import time
 from sys import version_info
+
+import buttonshim
 
 DEVICE = "PCM"
 VOL_REPEAT = 0.2

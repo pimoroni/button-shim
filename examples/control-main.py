@@ -1,6 +1,7 @@
 #!/usr/bin/env python
-import time
 import signal
+import time
+
 import buttonshim
 
 print("""

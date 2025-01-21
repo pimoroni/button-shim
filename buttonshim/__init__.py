@@ -1,8 +1,9 @@
-import smbus2
-import time
-from threading import Thread
 import atexit
+import time
 from colorsys import hsv_to_rgb
+from threading import Thread
+
+import smbus2
 
 try:
     import queue

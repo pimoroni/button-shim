@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import signal
+
 import buttonshim
 
 print("""

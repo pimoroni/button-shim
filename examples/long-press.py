@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 
 import signal
-import buttonshim
 
+import buttonshim
 
 print("""
 Buttom SHIM: Long Press
