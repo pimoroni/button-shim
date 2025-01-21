@@ -229,9 +229,9 @@ def _enqueue():
     _reg_queue = []
 
 
-def _chunk(l, n):
-    for i in range(0, len(l)+1, n):
-        yield l[i:i + n]
+def _chunk(data, size):
+    for i in range(0, len(data) + 1, size):
+        yield data[i:i + size]
 
 
 def _write_byte(byte):
