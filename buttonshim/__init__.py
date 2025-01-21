@@ -1,4 +1,4 @@
-import smbus
+import smbus2
 import time
 from threading import Thread
 import atexit
@@ -187,7 +187,7 @@ def setup():
     if _bus is not None:
         return
 
-    _bus = smbus.SMBus(1)
+    _bus = smbus2.SMBus(1)
 
     _bus.write_byte_data(ADDR, REG_CONFIG, 0b00011111)
     _bus.write_byte_data(ADDR, REG_POLARITY, 0b00000000)
