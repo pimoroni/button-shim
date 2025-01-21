@@ -1,3 +1,9 @@
+1.0.0
+-----
+
+* Port to hatch/pyproject toml
+* Switch from smbus to smbus2
+
 0.0.2
 -----
 
